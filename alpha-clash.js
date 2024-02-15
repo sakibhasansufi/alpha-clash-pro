@@ -1,16 +1,10 @@
-// function play (){
-//     // hide the playground
-//     const homeScreen = document.getElementById('home-screen');
-//     homeScreen.classList.add('hidden');
-//     // show the playground
-//     const playgroundScetion = document.getElementById('play-ground');
-//     playgroundScetion.classList.remove( 'hidden' );
-
-// }
 
 function play() {
     hideElementById('home-screen');
     showElementById('play-ground');
+    hideElementById('final-score');
+    setTextElementValueById('current-life', 5);
+    setTextElementValueById('current-score', 0);
     continueGame();
 }
 
@@ -26,27 +20,27 @@ function showElementById(elementId2) {
 }
 
 
-// function continueGame() {
-//     const alphabet = getRandomAlphabet();
-//     console.log('your random alphabet',alphabet);
-// }
+function getElementTextById(elementId) {
+    const element = document.getElementById(elementId);
+    const text = element.innerText;
+    return text
+}
+
+function gameOver() {
+    hideElementById('play-ground');
+    showElementById('final-score');
+    // update final score
+    const lastScore = getTextElementById('current-score');
+    setTextElementValueById('game-score', lastScore);
+    // clear the last selected highlighted
+    const currentAlphabet = getElementTextById('current-alphabet');
+    hideElementById(currentAlphabet);
+
+};
 
 
-// function getRandomAlphabet() {
-//     const alphabetString = 'abcdefghijklmnopqrstuvwxyz';
-//     const alphabets = alphabetString.split('');
-//     console.log(alphabets);
-//     const randomNumber = Math.random() * 25;
-//     const index = Math.round(randomNumber);
-//     const alphabet = alphabets[index];
-//     // console.log(index, alphabet);
-//     return alphabet;
-
-// }
 function continueGame() {
     const call = randomAlphabet();
-    console.log('your random letter is', call);
-    // randomly generated number
     const currentLetter = document.getElementById('current-alphabet');
     currentLetter.innerText = call;
     setBackgroundColor(call);
@@ -68,7 +62,76 @@ function setBackgroundColor(elementId3) {
 }
 
 
-function removeColor (elementId4){
+function removeColor(elementId4) {
     const element = document.getElementById(elementId4);
     element.classList.remove('bg-orange-400');
 }
+
+
+
+function getTextElementById(elementId) {
+    const element = document.getElementById(elementId);
+    const elementValueText = element.innerText;
+    const value = parseInt(elementValueText);
+    return value;
+
+}
+
+
+function setTextElementValueById(elementId, value) {
+    const element = document.getElementById(elementId);
+    element.innerText = value;
+}
+function handleKeyboardKeyUpEvent(event) {
+    const playerPressed = event.key;
+    console.log('player pressed', playerPressed);
+    // stop game 
+    if(playerPressed === 'Escape'){
+        gameOver () ;
+    }
+    const currentAlphabetElement = document.getElementById('current-alphabet');
+    const currentAlphabet = currentAlphabetElement.innerText;
+    const expectedAlphabet = currentAlphabet.toLocaleLowerCase();
+    console.log(playerPressed, expectedAlphabet);
+
+    if (playerPressed === expectedAlphabet) {
+        console.log('u win');
+        const currentScore = getTextElementById('current-score');
+        const updatedScore = currentScore + 1;
+        setTextElementValueById('current-score', updatedScore);
+        //         console.log('u have pressed correctly ', expectedAlphabet);
+        //         const currentScoreElemet = document.getElementById('current-score');
+        //         const currentScoreText = currentScoreElemet.innerText;
+        //         const currentScore = parseInt(currentScoreText);
+        // const newScore = currentScore + 1;
+        //         currentScoreElemet.innerText = newScore;
+        removeColor(expectedAlphabet);
+        continueGame();
+    }
+    else {
+        console.log('you lost a life');
+        const currentLife = getTextElementById('current-life');
+        const updatedLife = currentLife - 1;
+        setTextElementValueById('current-life', updatedLife);
+        if (updatedLife === 0) {
+            gameOver();
+
+        }
+
+        //         const currentLifeElement = document.getElementById('current-life');
+        //         const currentLifeText = currentLifeElement.innerText;
+        //         const currentLife = parseInt(currentLifeText);
+        //         const newLife = currentLife - 1;
+        //         currentLifeElement.innerText = newLife;
+
+        //         if (newLife === 0) {
+        //             gameOver();
+        //         }
+
+    }
+}
+
+document.addEventListener('keyup', handleKeyboardKeyUpEvent);
+
+
+
